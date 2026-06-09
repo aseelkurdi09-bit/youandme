@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Happy Birthday</title>
+	<style>
+		:root {
+			--bg1: #07070b;
+			--bg2: #15090d;
+			--bg3: #321017;
+			--accent: #ff2f4d;
+			--accent-2: #f2c14e;
+			--text: #fff7f1;
+			--muted: rgba(255, 247, 241, 0.74);
+			--card: rgba(14, 10, 14, 0.72);
+			--card-border: rgba(255, 255, 255, 0.11);
+			--shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		html, body {
+			margin: 0;
+			min-height: 100%;
+		}
+
+		body {
+			font-family: Georgia, "Times New Roman", serif;
+			color: var(--text);
+			background:
+				radial-gradient(circle at top, rgba(255, 47, 77, 0.22), transparent 24%),
+				radial-gradient(circle at 18% 18%, rgba(242, 193, 78, 0.16), transparent 18%),
+				radial-gradient(circle at 82% 14%, rgba(216, 216, 223, 0.12), transparent 20%),
+				linear-gradient(160deg, var(--bg1), var(--bg2) 50%, var(--bg3));
+			min-height: 100svh;
+			overflow-x: hidden;
+		}
+
+		.gate {
+			padding: 20px;
+			transition: opacity 0.45s ease, transform 0.45s ease;
+		}
+
+		.gate.hidden {
+			opacity: 0;
+			transform: translateY(18px) scale(0.98);
+			pointer-events: none;
+			position: absolute;
+			inset: 0;
+		}
+
+		.index {
+			opacity: 0;
+			transform: translateY(24px) scale(0.98);
+			pointer-events: none;
+			transition: opacity 0.7s ease, transform 0.7s ease;
+			position: absolute;
+			inset: 0;
+			padding: 20px;
+		}
+
+		.index.show {
+			opacity: 1;
+			transform: translateY(0) scale(1);
+			pointer-events: auto;
+			position: relative;
+		}
+
+		.eyebrow {
+			text-transform: uppercase;
+			letter-spacing: 0.22em;
+			font-size: 0.78rem;
+			color: rgba(255, 209, 214, 0.82);
+			margin: 0 0 14px;
+		}
+
+		h1, h2, p {
+			margin: 0;
+		}
+
+		.title {
+			font-size: clamp(2rem, 11vw, 3.6rem);
+			line-height: 0.95;
+			font-weight: 700;
+			max-width: 9ch;
+		}
+
+		.subtitle {
+			margin-top: 16px;
+			max-width: 36ch;
+			color: var(--muted);
+			font-size: 0.98rem;
+			line-height: 1.65;
+		}
+
+		.status {
+			margin-top: 18px;
+			display: flex;
+			align-items: center;
+			gap: 12px;
+			flex-wrap: wrap;
+			color: var(--text);
+			font-size: 0.98rem;
+		}
+
+		.count {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			min-width: 3.2rem;
+			padding: 0.45rem 0.8rem;
+			border-radius: 999px;
+			background: rgba(255, 47, 77, 0.18);
+			border: 1px solid rgba(255, 47, 77, 0.35);
+			color: #ffd5db;
+			font-weight: 700;
+		}
+
+		.stage {
+			margin-top: 34px;
+			display: grid;
+			place-items: center;
+			min-height: 360px;
+			position: relative;
+		}
+
+		.cake-wrap {
+			position: relative;
+			width: min(500px, 100%);
+			aspect-ratio: 1 / 0.72;
+			display: grid;
+			place-items: center;
+		}
+
+		.cake {
+			position: absolute;
+			left: 50%;
+			bottom: 2%;
+			width: min(90%, 420px);
+			height: 40%;
+			transform: translateX(-50%);
+			border-radius: 34px 34px 40px 40px;
+			background:
+				linear-gradient(180deg, rgba(255, 255, 255, 0.34), transparent 20%),
+				linear-gradient(180deg, #fbefeb 0%, #f3d3ca 26%, #e09c8d 75%, #c96f65 100%);
+			box-shadow:
+				0 32px 56px rgba(0, 0, 0, 0.3),
+				inset 0 12px 0 rgba(255, 255, 255, 0.2);
+		}
+
+		.cake::before {
+			content: "";
+			position: absolute;
+			top: -16px;
+			left: 50%;
+			transform: translateX(-50%);
+			width: 108%;
+			height: 38px;
+			border-radius: 999px;
+			background:
+				radial-gradient(circle at 50% 25%, rgba(255, 255, 255, 0.95) 0 16%, transparent 17%),
+				linear-gradient(180deg, #fffdfb, #f8cfc4 82%);
+			box-shadow:
+				inset 0 -5px 0 rgba(0, 0, 0, 0.05),
+				0 10px 24px rgba(255, 182, 172, 0.3);
+		}
+
+		.cake::after {
+			content: "";
+			position: absolute;
+			left: 50%;
+			bottom: -12px;
+			transform: translateX(-50%);
+			width: 94%;
+			height: 18px;
+			border-radius: 999px;
+			background: radial-gradient(circle, rgba(242, 193, 78, 0.34), transparent 72%);
+			filter: blur(5px);
+		}
+
+		.ring {
+			position: absolute;
+			inset: 8%;
+			border-radius: 50%;
+			background: radial-gradient(circle, rgba(255,255,255,0.08), rgba(255,255,255,0.02) 65%, transparent 67%);
+			filter: blur(2px);
+		}
+
+		.candle {
+			position: absolute;
+			width: 22px;
+			height: 104px;
+			padding: 0;
+			border: 0;
+			background: transparent;
+			cursor: pointer;
+			touch-action: manipulation;
+			transform-origin: bottom center;
+			opacity: 0;
+			transform: translateY(18px) scale(0.96) rotate(var(--rotation, 0deg));
+			transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, filter 0.3s ease;
+			display: grid;
+			place-items: start center;
+		}
+
+		.candle.show {
+			opacity: 1;
+			transform: translateY(0) scale(1) rotate(var(--rotation, 0deg));
+		}
+
+		.candle:hover {
+			transform: translateY(-4px) scale(1.02) rotate(var(--rotation, 0deg));
+		}
+
+		.candle:focus-visible {
+			outline: 3px solid rgba(255, 207, 112, 0.85);
+			outline-offset: 6px;
+			border-radius: 18px;
+		}
+
+		.candle[disabled] {
+			cursor: default;
+			filter: grayscale(0.2) brightness(0.9);
+		}
+
+		.stick {
+			position: absolute;
+			bottom: 0;
+			width: 15px;
+			height: 80px;
+			border-radius: 12px 12px 8px 8px;
+			background: linear-gradient(180deg, #fffaf4, #ece7ef 40%, #afaab8);
+			box-shadow: inset 0 4px 0 rgba(255, 255, 255, 0.3);
+		}
+
+		.flame {
+			width: 18px;
+			height: 26px;
+			border-radius: 50% 50% 45% 45%;
+			background: radial-gradient(circle at 50% 30%, #fffbe6 0 22%, #ffad4d 38%, #ff2f4d 68%, rgba(255, 47, 77, 0.2) 100%);
+			position: absolute;
+			top: 0;
+			filter: drop-shadow(0 0 12px rgba(255, 47, 77, 0.85));
+			transform: translateY(-2px);
+			animation: flicker 1.2s infinite ease-in-out;
+			transform-origin: center bottom;
+		}
+
+		.candle.tapped .flame {
+			animation: none;
+			opacity: 0;
+			transform: translateY(-1px) scale(0.2);
+			transition: opacity 0.2s ease, transform 0.2s ease;
+		}
+
+		.candle.tapped .stick {
+			background: linear-gradient(180deg, #e9d6c4, #cbb6a2 42%, #a58d76);
+		}
+
+		.message {
+			text-align: center;
+			padding: clamp(12px, 2vw, 24px) 0 6px;
+		}
+
+		.message h2 {
+			font-size: clamp(2.5rem, 7vw, 6rem);
+			line-height: 0.95;
+			margin-bottom: 12px;
+		}
+
+		.message p {
+			max-width: 42rem;
+			margin: 0 auto;
+			color: var(--muted);
+			line-height: 1.7;
+			font-size: 1.05rem;
+		}
+
+		.cards {
+			margin-top: 28px;
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 16px;
+		}
+
+		.card {
+			border-radius: 24px;
+			padding: 18px;
+			background: linear-gradient(180deg, rgba(255,47,77,0.14), rgba(255,255,255,0.05));
+			border: 1px solid rgba(255,255,255,0.12);
+			min-height: 124px;
+		}
+
+		.card-link {
+			display: block;
+			color: inherit;
+			text-decoration: none;
+			transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+		}
+
+		.card-link:hover,
+		.card-link:focus-visible {
+			transform: translateY(-3px);
+			border-color: rgba(255, 47, 77, 0.55);
+			background: linear-gradient(180deg, rgba(255,47,77,0.22), rgba(255,255,255,0.08));
+			outline: none;
+		}
+
+		.card h3 {
+			margin: 0 0 8px;
+			font-size: 1.04rem;
+		}
+
+		.card p {
+			color: var(--muted);
+			line-height: 1.55;
+			font-size: 0.95rem;
+		}
+
+		.glow {
+			position: absolute;
+			inset: auto 50% 10% auto;
+			width: 260px;
+			height: 260px;
+			translate: 50% 0;
+			background: radial-gradient(circle, rgba(255, 47, 77, 0.24), transparent 66%), radial-gradient(circle, rgba(242, 193, 78, 0.18), transparent 56%);
+			filter: blur(10px);
+			pointer-events: none;
+		}
+
+		.floaters span {
+			position: absolute;
+			width: 8px;
+			height: 8px;
+			border-radius: 50%;
+			background: rgba(255, 230, 181, 0.8);
+			box-shadow: 0 0 20px rgba(255, 230, 181, 0.7);
+			animation: drift 10s linear infinite;
+		}
+
+		.floaters span:nth-child(1) { left: 8%; top: 18%; animation-delay: 0s; }
+		.floaters span:nth-child(2) { left: 20%; top: 8%; animation-delay: 1s; }
+		.floaters span:nth-child(3) { right: 16%; top: 14%; animation-delay: 2s; }
+		.floaters span:nth-child(4) { right: 8%; top: 30%; animation-delay: 3s; }
+		.floaters span:nth-child(5) { left: 12%; bottom: 18%; animation-delay: 4s; }
+		.floaters span:nth-child(6) { right: 20%; bottom: 12%; animation-delay: 5s; }
+
+		.confetti {
+			position: absolute;
+			inset: 0;
+			pointer-events: none;
+			overflow: hidden;
+		}
+
+		.confetti i {
+			position: absolute;
+			width: 10px;
+			height: 18px;
+			border-radius: 4px;
+			background: var(--accent);
+			top: -24px;
+			animation: fall 4.8s linear infinite;
+			opacity: 0.9;
+		}
+
+		.confetti i:nth-child(2n) { background: var(--accent-2); }
+		.confetti i:nth-child(3n) { background: #d8d8df; }
+		.confetti i:nth-child(4n) { background: #ffffff; }
+
+		.confetti i:nth-child(1) { left: 10%; animation-delay: 0s; }
+		.confetti i:nth-child(2) { left: 18%; animation-delay: 0.6s; }
+		.confetti i:nth-child(3) { left: 26%; animation-delay: 1.2s; }
+		.confetti i:nth-child(4) { left: 36%; animation-delay: 0.3s; }
+		.confetti i:nth-child(5) { left: 48%; animation-delay: 1.1s; }
+		.confetti i:nth-child(6) { left: 58%; animation-delay: 0.5s; }
+		.confetti i:nth-child(7) { left: 66%; animation-delay: 1.4s; }
+		.confetti i:nth-child(8) { left: 76%; animation-delay: 0.8s; }
+		.confetti i:nth-child(9) { left: 84%; animation-delay: 1.7s; }
+		.confetti i:nth-child(10) { left: 92%; animation-delay: 0.2s; }
+
+		@keyframes flicker {
+			0%, 100% { transform: translateY(-2px) scale(1); }
+			50% { transform: translateY(-4px) scale(0.93, 1.07); }
+		}
+
+		@keyframes drift {
+			0% { transform: translateY(0) translateX(0) scale(1); opacity: 0.15; }
+			30% { opacity: 0.9; }
+			100% { transform: translateY(-40px) translateX(20px) scale(1.4); opacity: 0; }
+		}
+
+		@keyframes fall {
+			0% { transform: translateY(0) rotate(0deg); }
+			100% { transform: translateY(120vh) rotate(420deg); }
+		}
+
+		@media (min-width: 720px) {
+			.scene {
+				padding: 24px;
+			}
+
+			.panel {
+				width: min(980px, 100%);
+			}
+
+			.gate, .index {
+				border-radius: 32px;
+			}
+
+			.gate {
+				padding: clamp(24px, 4vw, 44px);
+			}
+
+			.index {
+				padding: clamp(24px, 4vw, 48px);
+			}
+
+			.title {
+				font-size: clamp(2.3rem, 6vw, 5.1rem);
+				max-width: 10ch;
+			}
+
+			.subtitle {
+				max-width: 56ch;
+				font-size: 1.02rem;
+			}
+
+			.stage {
+				min-height: 420px;
+			}
+
+			.cake-wrap {
+				width: min(520px, 100%);
+			}
+
+			.cards {
+				grid-template-columns: repeat(3, minmax(0, 1fr));
+			}
+
+			.message h2 {
+				font-size: clamp(2.5rem, 7vw, 6rem);
+			}
+		}
+
+		@media (max-width: 719px) {
+			.cards {
+				grid-template-columns: 1fr;
+			}
+
+			.stage {
+				min-height: 380px;
+			}
+
+			.cake-wrap {
+				width: min(440px, 100%);
+			}
+
+			.message h2 {
+				font-size: clamp(2.2rem, 11vw, 4.5rem);
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="scene">
+		<div class="sparkle"></div>
+		<div class="panel">
+			<section class="gate" id="gate">
+				<p class="eyebrow">Birthday surprise</p>
+				<h1 class="title">Tap all 14 candles to open the surprise</h1>
+				<p class="subtitle">Each candle is one tap away from unlocking the surprise. Lightly tap them all, and the birthday reveal will appear.</p>
+				<div class="status" aria-live="polite">
+					<span class="count" id="count">0 / 14</span>
+					<span id="instruction">Start with any candle you like.</span>
+				</div>
+
+				<div class="stage">
+					<div class="glow"></div>
+					<div class="floaters" aria-hidden="true">
+						<span></span><span></span><span></span><span></span><span></span><span></span>
+					</div>
+					<div class="cake-wrap" id="cakeWrap" aria-label="Birthday candles"></div>
+				</div>
+			</section>
+
+			<section class="index" id="indexPage" aria-hidden="true">
+				<div class="confetti" aria-hidden="true">
+					<i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+				</div>
+				<div class="message">
+					<p class="eyebrow">The surprise is open</p>
+					<h2>Happy Birthday!</h2>
+					<p>This is where the index page can begin. You can add photos, notes, a timeline, a playlist, or anything you want for her birthday.</p>
+				</div>
+
+				<div class="cards">
+					<a class="card card-link" href="memory.html" aria-label="Open the memory lane page">
+						<h3>Memory Lane</h3>
+						<p>Tap this to open 10 little memory boxes and unlock a memory throwback with each one.</p>
+					</a>
+					<a class="card card-link" href="gallery.html" aria-label="Open the photo wall gallery">
+						<h3>Photo Wall</h3>
+						<p>Tap this to open the gallery and see pictures of us where you look lovely and I look like lovely's friend.</p>
+					</a>
+					<a class="card card-link" href="isthatmyho.html" aria-label="Open the is that my ho page">
+						<h3>is that my ho?</h3>
+						<p>Tap this to open the picture flips and reveal stuff that remind me of you.</p>
+					</a>
+					<a class="card card-link" href="your-own-concert.html" aria-label="Open your own concert page">
+						<h3>your own concert</h3>
+						<p>Tap this to open your personal Spotify concert with playlists picked for her.</p>
+					</a>
+				</div>
+			</section>
+		</div>
+	</div>
+
+	<script>
+		const candleCount = 14;
+		const cakeWrap = document.getElementById('cakeWrap');
+		const countText = document.getElementById('count');
+		const instruction = document.getElementById('instruction');
+		const gate = document.getElementById('gate');
+		const indexPage = document.getElementById('indexPage');
+
+		let tappedCount = 0;
+
+		const positions = Array.from({ length: candleCount }, (_, index) => {
+			const spread = candleCount > 1 ? index / (candleCount - 1) : 0.5;
+			return {
+				x: 14 + spread * 72,
+				bottom: 34 + Math.sin(spread * Math.PI) * 0.5,
+				rotation: (index - (candleCount - 1) / 2) * 1.2
+			};
+		});
+
+		function updateStatus() {
+			countText.textContent = `${tappedCount} / ${candleCount}`;
+
+			if (tappedCount === candleCount) {
+				instruction.textContent = 'All candles are out. The surprise is ready.';
+			} else if (tappedCount === 0) {
+				instruction.textContent = 'Start with any candle you like.';
+			} else {
+				instruction.textContent = `${candleCount - tappedCount} candle${candleCount - tappedCount === 1 ? '' : 's'} left.`;
+			}
+		}
+
+		function revealIndexPage() {
+			gate.classList.add('hidden');
+			indexPage.classList.add('show');
+			indexPage.setAttribute('aria-hidden', 'false');
+		}
+
+		function showIndexPageFromHash() {
+			if (location.hash === '#indexPage') {
+				tappedCount = candleCount;
+				updateStatus();
+				revealIndexPage();
+			}
+		}
+
+		function tapCandle(button) {
+			if (button.disabled) return;
+
+			button.classList.add('tapped');
+			button.disabled = true;
+			tappedCount += 1;
+			updateStatus();
+
+			if (tappedCount === candleCount) {
+				setTimeout(revealIndexPage, 500);
+			}
+		}
+
+		positions.forEach((position, index) => {
+			const candle = document.createElement('button');
+			candle.type = 'button';
+			candle.className = 'candle';
+			candle.style.left = `${position.x}%`;
+			candle.style.bottom = `${position.bottom}%`;
+			candle.style.setProperty('--rotation', `${position.rotation}deg`);
+			candle.style.zIndex = String(20 - index);
+			candle.setAttribute('aria-label', `Candle ${index + 1}`);
+
+			candle.innerHTML = '<span class="flame"></span><span class="stick"></span>';
+			candle.addEventListener('click', () => tapCandle(candle));
+
+			cakeWrap.appendChild(candle);
+		});
+
+		requestAnimationFrame(() => {
+			positions.forEach((_, index) => {
+				window.setTimeout(() => {
+					const candle = cakeWrap.children[index];
+					if (candle) candle.classList.add('show');
+				}, index * 110);
+			});
+		});
+
+		updateStatus();
+		showIndexPageFromHash();
+	</script>
+</body>
+</html>
